@@ -9,7 +9,7 @@ using System.Data.OleDb;
 
 namespace WDBFNS
 {
-    class WDBF
+  public  class WDBF
     {
         // private OdbcConnection _connection = null;
         private OleDbConnection _connection = null;
@@ -35,9 +35,11 @@ namespace WDBFNS
             }
             return dt;
         }
-        public DataTable GetAll(string dbpath)
+        public DataTable DBSelect(string command,string dbpath, string command2)
         {
-            return Execute("SELECT FIRST_LAST_NAME FROM " + dbpath);
+         //   DateTime tm = DateTime.Parse(DateTime.Today.ToString("dd.MM.yyyy"));
+        //    MessageBox.Show(DateTime.Today.ToString("dd.MM.yyyy"));
+            return Execute("SELECT " + command + " FROM " + dbpath + " " + command2);
         }
 
         public WDBF()
