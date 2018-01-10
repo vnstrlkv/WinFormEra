@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PersonalDuty;
+using System.IO;
 using System.Windows.Forms;
 using WDBFNS;
 namespace WinFormEra
@@ -16,6 +17,9 @@ public partial class Form1 : Form
         public DataTable dutyDT = new DataTable();
         public DataTable personalDT = new DataTable();
         public WDBF WDBF = new WDBF();
+        public Clinic clinic = new Clinic();
+        public List <Doctors> doctors = new List <Doctors>();
+        public Doct_shedule doct_shedule = new Doct_shedule();
         public Form1()
         {
             InitializeComponent();
@@ -75,30 +79,40 @@ public partial class Form1 : Form
 
         private void DutyCheked()
         {
+            doctors = new List<Doctors>();
+
             DataTable dutyCheked = new DataTable();
             dutyCheked = dutyDT.Clone();
             var personalDTclone = personalDT.Clone();
             personalDTclone = (DataTable)dataGridView1.DataSource;
-            foreach (DataRow data in personalDT.Rows)
+            foreach (DataRow data in personalDTclone.Rows)
             {
-                if (data[1].ToString() == "True")
+                if (data["Selected"].ToString() == "True")
                 {
-                    DataRow[] foundRows = dutyDT.Select("FIRST_LAST_NAME = '" + data[0].ToString() + "'");
-                    if (foundRows != null)
+                   
+                    DataRow[] foundRows = dutyDT.Select("FIRST_LAST_NAME = '" + data["FIRST_LAST_NAME"].ToString() + "'");
+                    if (foundRows.Length != 0)
+                    {
+                        Doctors tmp = new Doctors();
+                        doctors.Add(tmp.InsertDoctor(data, clinic));
+
                         for (int i = 0; i < foundRows.Length; i++)
                         {
                             dutyCheked.ImportRow(foundRows[i]);
                         }
+                    }
                 }
             }
 
+            doctors[0].OutToCSV(doctors, clinic, false); // сюда вставить  добавление доктора в класс для выгрузки в csv
+                                                            //   dutyCheked.Columns.Remove("ind_code");
             dataGridView1.DataSource = dutyCheked;
         }
 
 
         void InitTable()
         {
-            personalDT = WDBF.DBSelect("FIRST_LAST_NAME", "personal", "");
+            personalDT = WDBF.DBSelect("IND_CODE, FIRST_LAST_NAME", "personal", "");
             personalDT.Columns.Add(new DataColumn("Selected", typeof(bool)));
 
             dutyDT.Columns.Add("FIRST_LAST_NAME", typeof(string));
@@ -114,7 +128,28 @@ public partial class Form1 : Form
                     data[6] = true;
                 }
             }
-            dutyDT.Columns.Remove("ind_code");
+            // clinic.OutToCSV();
+          //     foreach (DataRow dt in personalDT.Rows)
+         //   {
+        //        Doctors tmp = new Doctors();
+         //       doctors.Add(tmp.InsertDoctor(dt, clinic));
+           // }
+            
+                
+         //       doct_shedule.OutToCSV(dutyDT, doctors, false);
+
+
+           // doct_shedule.OutString();
+
+
+
+
+
+           
+            //sw = new StreamWriter("infoclinic_doctshedule.csv");
+         //   doct_shedule.Insert_doct_shedule(dutyDT, doctors);
+         //   doct_shedule.OutToCSV();
+           // sw.Close();
         }
 
         void MainView()
@@ -131,10 +166,13 @@ public partial class Form1 : Form
             DataSet dataSet = new DataSet();
             DataTable dutyDTclone = dutyDT.Clone(); 
             dutyDTclone= (DataTable)dataGridView1.DataSource;
-            dutyDTclone.Columns.Remove("client_cod");
+           // doct_shedule.Insert_doct_shedule(dutyDTclone, doctors);
+           // doct_shedule.OutCSV();
+
+           // dutyDTclone.Columns.Remove("client_cod");
             dataSet.Tables.Add(dutyDTclone);
             // Save to disk
-            dataSet.WriteXml(@"C:\MyDataset.xml");
+            dataSet.WriteXml(@"C:\MyDataset.csv");
 
             // Read from disk
        //     dataSet.ReadXml(@"C:\MyDataset.xml");
