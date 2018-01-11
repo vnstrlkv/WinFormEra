@@ -20,6 +20,7 @@ public partial class Form1 : Form
         public Clinic clinic = new Clinic();
         public List <Doctors> doctors = new List <Doctors>();
         public Doct_shedule doct_shedule = new Doct_shedule();
+        public SheduleCollect sheduleCollect = new SheduleCollect();
         public Form1()
         {
             InitializeComponent();
@@ -33,7 +34,7 @@ public partial class Form1 : Form
             button1.Text = "Готово";
             button2.Text = "Назад";
             button2.Hide();
-
+            clinic.OutToCSV();
             InitTable();
             MainView();
 
@@ -81,8 +82,8 @@ public partial class Form1 : Form
         {
             doctors = new List<Doctors>();
 
-            DataTable dutyCheked = new DataTable();
-            dutyCheked = dutyDT.Clone();
+            DataTable dutyChekList = new DataTable();
+            dutyChekList = dutyDT.Clone();
             var personalDTclone = personalDT.Clone();
             personalDTclone = (DataTable)dataGridView1.DataSource;
             foreach (DataRow data in personalDTclone.Rows)
@@ -98,15 +99,16 @@ public partial class Form1 : Form
 
                         for (int i = 0; i < foundRows.Length; i++)
                         {
-                            dutyCheked.ImportRow(foundRows[i]);
+                            dutyChekList.ImportRow(foundRows[i]);
                         }
                     }
                 }
             }
 
             doctors[0].OutToCSV(doctors, clinic, false); // сюда вставить  добавление доктора в класс для выгрузки в csv
-                                                            //   dutyCheked.Columns.Remove("ind_code");
-            dataGridView1.DataSource = dutyCheked;
+            doct_shedule.OutToCSV(dutyDT, doctors, false);
+                                                           
+            dataGridView1.DataSource = dutyChekList;
         }
 
 
@@ -128,28 +130,6 @@ public partial class Form1 : Form
                     data[6] = true;
                 }
             }
-            // clinic.OutToCSV();
-          //     foreach (DataRow dt in personalDT.Rows)
-         //   {
-        //        Doctors tmp = new Doctors();
-         //       doctors.Add(tmp.InsertDoctor(dt, clinic));
-           // }
-            
-                
-         //       doct_shedule.OutToCSV(dutyDT, doctors, false);
-
-
-           // doct_shedule.OutString();
-
-
-
-
-
-           
-            //sw = new StreamWriter("infoclinic_doctshedule.csv");
-         //   doct_shedule.Insert_doct_shedule(dutyDT, doctors);
-         //   doct_shedule.OutToCSV();
-           // sw.Close();
         }
 
         void MainView()
@@ -164,15 +144,19 @@ public partial class Form1 : Form
         {
 
             DataSet dataSet = new DataSet();
-            DataTable dutyDTclone = dutyDT.Clone(); 
-            dutyDTclone= (DataTable)dataGridView1.DataSource;
-           // doct_shedule.Insert_doct_shedule(dutyDTclone, doctors);
+            DataTable dutyDTwithChek = dutyDT.Clone(); 
+            dutyDTwithChek = (DataTable)dataGridView1.DataSource;
+
+            sheduleCollect.InsertShedule(dutyDTwithChek);
+            sheduleCollect.OutToCSV(false);
+            
+            // doct_shedule.Insert_doct_shedule(dutyDTclone, doctors);
            // doct_shedule.OutCSV();
 
            // dutyDTclone.Columns.Remove("client_cod");
-            dataSet.Tables.Add(dutyDTclone);
+            //dataSet.Tables.Add(dutyDTclone);
             // Save to disk
-            dataSet.WriteXml(@"C:\MyDataset.csv");
+            //dataSet.WriteXml(@"C:\MyDataset.csv");
 
             // Read from disk
        //     dataSet.ReadXml(@"C:\MyDataset.xml");

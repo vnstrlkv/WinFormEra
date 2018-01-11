@@ -29,7 +29,7 @@ namespace PersonalDuty
         }
       public void OutToCSV ()
         {
-            using (var w = new StreamWriter("infoclinic_doctors.csv", false, Encoding.UTF8))
+            using (var w = new StreamWriter("infoclinic_clinics.csv", false, Encoding.UTF8))
             {  
                w.WriteLine(OutString());
                w.Flush();                
@@ -235,13 +235,75 @@ namespace PersonalDuty
         }
 
     }
+
+
+    public class SheduleCollect 
+    {
+        List<Shedule> sheduleList = new List<Shedule>();
+
+        public void InsertShedule(DataTable dutyWithChekTABLE)
+        {
+            foreach (DataRow duty in dutyWithChekTABLE.Rows)
+            {
+                Shedule tmp = new Shedule();
+                if(duty["BusyTime"].ToString()=="True")
+                sheduleList.Add(tmp.AddShedule(duty));
+            }
+        }
+
+        public void OutToCSV(bool flagwrite)
+        {
+            using (var w = new StreamWriter("infoclinic_shedule.csv", flagwrite, Encoding.UTF8))
+            {
+                if (sheduleList.Count!=0)
+                foreach (Shedule shedule in sheduleList)
+                {
+                        if (shedule != null)
+                        {
+                            string outputstr = shedule.DCODE +
+                          ";" + shedule.DATE +
+                          ";" + shedule.ST_HOUR +
+                          ";" + shedule.ST_MIN +
+                          ";" + shedule.END_HOUR +
+                          ";" + shedule.END_MIN + "\n\n";
+                            w.WriteLine(outputstr);
+                        }
+                        
+                    w.Flush();
+                }
+            }
+        }
+    }
+
     class Shedule  //занятое время
     {
-        string DCODE { get; set; }
-        DateTime DATE { get; set; }
-        int ST_HOUR { get; set; }
-        int ST_MIN { get; set; }
-        int END_HOUR { get; set; }
-        int END_MIN { get; set; }
+       public string DCODE { get; set; }
+       public  DateTime DATE { get; set; }
+       public   int ST_HOUR { get; set; }
+       public   int ST_MIN { get; set; }
+       public   int END_HOUR { get; set; }
+       public   int END_MIN { get; set; }
+
+           
+
+        public Shedule AddShedule(DataRow dutyRow)
+        {
+            if (dutyRow["BusyTime"].ToString()=="True")
+            {
+                DCODE =dutyRow["IND_CODE"].ToString();
+                DATE = DateTime.Parse(dutyRow["DATE"].ToString());
+
+                //разбитие времени
+                DateTime tmpStTime = DateTime.Parse( DateTime.Parse(dutyRow["date"].ToString()).ToString("dd.MM.yyyy") + " " + dutyRow["ST_TIME"].ToString());               
+                DateTime tmpEndTime = DateTime.Parse(DateTime.Parse(dutyRow["date"].ToString()).ToString("dd.MM.yyyy") + " " + dutyRow["END_TIME"].ToString());
+                ST_HOUR = int.Parse(tmpStTime.ToString("HH"));
+                ST_MIN = int.Parse(tmpStTime.ToString("mm"));
+                END_HOUR = int.Parse(tmpEndTime.ToString("HH"));
+                END_MIN = int.Parse(tmpEndTime.ToString("mm"));
+
+                return this;
+            }
+            return null;
+        }
     }
 }
