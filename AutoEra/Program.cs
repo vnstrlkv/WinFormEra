@@ -18,7 +18,7 @@ namespace AutoEra
 
         static void Main(string[] args)
         {
-            string path = @"C:\123\";
+            string path = @"D:\PHOENIX\dbc";
             test.Start();
             test.InitTable();
             test.InsertDoc();
@@ -37,7 +37,7 @@ namespace AutoEra
 
             fileSystemWatcher.Path = path;
             fileSystemWatcher.NotifyFilter = NotifyFilters.LastWrite;
-            fileSystemWatcher.Filter = "personal.dbf";
+            fileSystemWatcher.Filter = "duty.FPT";
             fileSystemWatcher.Changed+= FileSystemWatcher_Changed;
             fileSystemWatcher.EnableRaisingEvents = true;
 
@@ -55,6 +55,7 @@ namespace AutoEra
 
             test.InitTable();
             test.InsertDoc();
+            test.ToFTP();
         }
 
 

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using PersonalDuty;
 using System.IO;
 using System.Windows.Forms;
+using System.Diagnostics;
 using WDBFNS;
 namespace WinFormEra
 {
@@ -166,6 +167,13 @@ public partial class Form1 : Form
             dutyDSWithChek.Tables.Add(dutyDTWithChek);
             // Save to disk
             dutyDSWithChek.WriteXml("dutyDSWithChek.xml");
+
+
+            Process prc = new Process(); // Объявляем объект
+            prc.StartInfo.FileName = "AutoEra.exe"; // Полное имя файла, включая путь к файлу, к примеру "C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe", не забудь про собаку "@", что бы в строку слежи можно было записывать
+            prc.Start(); // Запускаем процесс
+            this.Close(); 
+
 
             // dutyDTclone.Columns.Remove("client_cod");
             //dataSet.Tables.Add(dutyDTclone);

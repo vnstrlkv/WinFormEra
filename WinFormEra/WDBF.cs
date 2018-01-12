@@ -46,7 +46,7 @@ namespace WDBFNS
         {
             //  this._connection = new System.Data.Odbc.OdbcConnection();
             this._connection = new OleDbConnection();
-            _connection.ConnectionString = @"Provider=vfpoledb;Data Source=C:\123\phoenix.dbc;Collating Sequence=machine; Exclusive=No";
+            _connection.ConnectionString = @"Provider=vfpoledb;Data Source=D:\PHOENIX\dbc\phoenix.dbc;Collating Sequence=machine; Exclusive=No";
         }
     }
 }

@@ -103,8 +103,7 @@ namespace AutoEra
             {
                 for (int j=0;j<dutyDTWithChek.Rows.Count;j++)
                     {
-                    Console.WriteLine(dutyDTWithChek.Rows[j][5]);
-                        if (dutyDTWithChek.Rows[j]["BusyTime"].ToString() == "true" || dutyDTWithChek.Rows[j]["BusyTime"].ToString() == "True")
+                        if ((dutyDTWithChek.Rows[j]["BusyTime"].ToString() == "true" || dutyDTWithChek.Rows[j]["BusyTime"].ToString() == "True") && (dutyDT.Rows[i]["BusyTime"].ToString() != "true" || dutyDT.Rows[i]["BusyTime"].ToString() != "True"))
                             if (dutyDT.Rows[i]["ind_code"].ToString() == dutyDTWithChek.Rows[j]["ind_code"].ToString())
                                 if (DateTime.Parse(dutyDT.Rows[i]["date"].ToString()).ToString("yyyyMMdd") == DateTime.Parse(dutyDTWithChek.Rows[j]["date"].ToString()).ToString("yyyyMMdd"))
                                     if (dutyDT.Rows[i]["st_time"].ToString() == dutyDTWithChek.Rows[j]["st_time"].ToString())
@@ -132,7 +131,7 @@ namespace AutoEra
             FTPUploadFile("infoclinic_doctors.csv");
             FTPUploadFile("infoclinic_doctschedule.csv");
             FTPUploadFile("infoclinic_schedule.csv");
-            Console.WriteLine("Выгрузка Успешна");
+           
 
         }
             private void FTPUploadFile(string filename)
@@ -171,6 +170,7 @@ namespace AutoEra
                 // Закрываем потоки
                 strm.Close();
                 fs.Close();
+                Console.WriteLine("Выгрузка Успешна в:{0}", DateTime.Now);
             }
             catch (Exception ex)
             {
