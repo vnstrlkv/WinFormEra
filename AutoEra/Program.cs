@@ -65,7 +65,7 @@ namespace AutoEra
                 Console.WriteLine("База была занята, попробуем позже =)");
                 using (var w = new StreamWriter("log.txt", true, Encoding.UTF8))
                 {
-                    w.WriteLine("База была занята, попробуем позже =)");
+                    w.WriteLine("{0} База была занята, попробуем позже =)",DateTime.Now);
                     w.Flush();
                 }
             }

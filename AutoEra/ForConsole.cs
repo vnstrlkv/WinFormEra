@@ -176,6 +176,11 @@ namespace AutoEra
                 strm.Close();
                 fs.Close();
                 Console.WriteLine("Выгрузка Успешна в:{0}", DateTime.Now);
+                using (var w = new StreamWriter("log.txt", true, Encoding.UTF8))
+                {
+                    w.WriteLine("{0} Console : Выгрузка успешна ", DateTime.Now );
+                    w.Flush();
+                }
             }
             catch (Exception ex)
             {
@@ -183,7 +188,7 @@ namespace AutoEra
                 Console.WriteLine(ex.Message, "Ошибка");
                 using (var w = new StreamWriter("log.txt", true, Encoding.UTF8))
                 {
-                    w.WriteLine(ex.Message + " : {0}", DateTime.Now);
+                    w.WriteLine("{0} Console : ", DateTime.Now+ex.Message);
                     w.Flush();
                 }
 

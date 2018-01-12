@@ -34,7 +34,7 @@ namespace WDBFNS
                     Console.WriteLine(e.Message);
                     using (var w = new StreamWriter("log.txt", true, Encoding.UTF8))
                     {
-                        w.WriteLine( e.Message + " : {0}",DateTime.Now);
+                        w.WriteLine("{0} WDBF : ", DateTime.Now + e.Message);
                         w.Flush();
                     }
                 }
