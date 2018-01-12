@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data;
+using System.IO;
 //using System.Windows.Forms;
 using System.Data.OleDb;
 
@@ -31,6 +32,11 @@ namespace WDBFNS
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
+                    using (var w = new StreamWriter("log.txt", true, Encoding.UTF8))
+                    {
+                        w.WriteLine( e.Message + " : {0}",DateTime.Now);
+                        w.Flush();
+                    }
                 }
             }
             return dt;

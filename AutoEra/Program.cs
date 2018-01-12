@@ -20,9 +20,11 @@ namespace AutoEra
         {
             string path = @"D:\PHOENIX\dbc";
             test.Start();
-            test.InitTable();
-            test.InsertDoc();
-            test.ToFTP();
+            if (test.InitTable())
+            {
+                test.InsertDoc();
+                test.ToFTP();
+            }
             MonitorDirectory(path);
 
            
@@ -52,10 +54,21 @@ namespace AutoEra
 
       static  void ChangeDB()
         {
-
-            test.InitTable();
-            test.InsertDoc();
-            test.ToFTP();
+            Console.Clear();
+            if (test.InitTable())
+            {
+                test.InsertDoc();
+                test.ToFTP();
+            }
+            else
+            {
+                Console.WriteLine("База была занята, попробуем позже =)");
+                using (var w = new StreamWriter("log.txt", true, Encoding.UTF8))
+                {
+                    w.WriteLine("База была занята, попробуем позже =)");
+                    w.Flush();
+                }
+            }
         }
 
 
