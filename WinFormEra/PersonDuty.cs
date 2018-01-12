@@ -38,11 +38,12 @@ namespace PersonalDuty
     }
  public   class Doctors  // список докторов
     {
+       public int ID { get; set; }
         public string DCODE { get; set; }
         string FULLNAME { get; set; }
         int FILIAL { get; set; }
-        int DEPNUM { get; set; }
-        int CHAIR { get; set; }
+        string DEPNUM { get; set; }
+        string CHAIR { get; set; }
         int VIEWINSCHED { get; set; }
         int STDTYPE { get; set; }
         string DOCTPOST { get; set; }
@@ -54,13 +55,14 @@ namespace PersonalDuty
             {
                 if (row["FIRST_LAST_NAME"] != null)
                 {
+                    ID = int.Parse(row["ID"].ToString());
                     DCODE = row["ind_code"].ToString();
                     FULLNAME = row["FIRST_LAST_NAME"].ToString();
                     FILIAL = clinic.FILID;
-                    DEPNUM = 0;
-                    CHAIR = 0;
+                    DEPNUM = null;
+                    CHAIR = null;
                     VIEWINSCHED = 1;
-                    STDTYPE = 1;
+                    STDTYPE = 13;
                     DOCTPOST = null;
                     VIEWINWEB = null;
                 }
@@ -69,8 +71,8 @@ namespace PersonalDuty
         }
         string OutString()
         {
-            string outputstr = string.Format("{0};{1};{2};{3};{4};{5};{6};{7};{8}"
-                               ,DCODE.Trim()
+            string outputstr = string.Format("1000{0};{1};{2};{3};{4};{5};{6};{7};{8}"
+                               ,ID
                                ,FULLNAME.Trim()
                                ,FILIAL
                                ,DEPNUM
@@ -85,8 +87,8 @@ namespace PersonalDuty
         }
         string OutString(Doctors doc)
         {
-            string outputstr = string.Format("{0};{1};{2};{3};{4};{5};{6};{7};{8}"
-                               , doc.DCODE.Trim()
+            string outputstr = string.Format("1000{0};{1};{2};{3};{4};{5};{6};{7};{8}"
+                               , doc.ID
                                , doc.FULLNAME.Trim()
                                , doc.FILIAL
                                , doc.DEPNUM
@@ -103,8 +105,10 @@ namespace PersonalDuty
         {
             /*запись в csv*/
 
-            using (var w = new StreamWriter("infoclinic_clinics.csv", flagwrite, Encoding.UTF8))
+            using (var w = new StreamWriter("infoclinic_doctors.csv", flagwrite, Encoding.UTF8))
             {
+                w.WriteLine("\"DCODE\";\"FULLNAME\";\"FILIAL\";\"DEPNUM\";\"CHAIR\";\"VIEWINSCHED\";\"STDTYPE\";\"DOCTPOST\";\"VIEWINWEB\"");
+                w.Flush();
                 foreach (DataRow personal in personalTable.Rows)
                 {
                     this.InsertDoctor(personal, clinic);
@@ -117,9 +121,11 @@ namespace PersonalDuty
         public void OutToCSV(List<Doctors> doctors, Clinic clinic, bool flagwrite)
         {
             /*запись в csv*/
-
-            using (var w = new StreamWriter("infoclinic_clinics.csv", flagwrite, Encoding.UTF8))
+            
+            using (var w = new StreamWriter("infoclinic_doctors.csv", flagwrite, Encoding.UTF8))
             {
+                w.WriteLine("\"DCODE\";\"FULLNAME\";\"FILIAL\";\"DEPNUM\";\"CHAIR\";\"VIEWINSCHED\";\"STDTYPE\";\"DOCTPOST\";\"VIEWINWEB\"");
+                w.Flush();
                 foreach (Doctors personal in doctors)
                 {
                    // this.InsertDoctor(doctors, clinic);
@@ -154,33 +160,35 @@ namespace PersonalDuty
            string tm2p = tmpStTime.Min<DateTime>().ToString("HH");
             ST_HOUR =int.Parse(tm2p);
             ST_MIN = int.Parse(tmpStTime.Min<DateTime>().ToString("mm"));
-            END_HOUR = int.Parse(tmpStTime.Max<DateTime>().ToString("HH"));
-            END_MIN = int.Parse(tmpStTime.Max<DateTime>().ToString("mm"));
+            END_HOUR = int.Parse(tmpEndTime.Max<DateTime>().ToString("HH"));
+            END_MIN = int.Parse(tmpEndTime.Max<DateTime>().ToString("mm"));
             var tmpinteral = tmpEndTime[0] - tmpStTime[0];
             INTERVAL = int.Parse(tmpinteral.Minutes.ToString());
             return this;
         }
-     public string OutString ()
+     public string OutString (Doct_shedule ds)
         {
-            return (DATE.ToString() + ";" + ST_HOUR + ";" + ST_MIN + ";" + END_HOUR + ";" + END_MIN + ";" + INTERVAL);
+            return ("1000"+ds.ID + ";" + ds.CHAIR + ";" + DATE.ToString("yyyy-MM-dd HH:mm:ss.fff") + ";" + ST_HOUR + ";" + ST_MIN + ";" + END_HOUR + ";" + END_MIN + ";" + INTERVAL+";" + ds.FILID);
         }
 
         
     }
  public   class Doct_shedule  // расписание докторов
     {
+        public int ID;
         string DCODE { get; set; }
-        string CHAIR { get; set; }
+        public string CHAIR { get; set; }
 
         Collection<Date_shedule> DATElist { get; set; }
 
-        int FILID { get; set; }
+        public int FILID { get; set; }
 
         public void InsertDoctShedule(DataTable data, Doctors doctor)
-        {        
+        {
+            ID = doctor.ID; 
             DCODE = doctor.DCODE;
             CHAIR = null;
-            FILID = 0;
+            FILID = 1;
             DataRow[] selectedDoctorRow = data.Select("ind_code = '"+ DCODE +"'");
             DataTable selectedDoctorTable = data.Clone();
 
@@ -211,7 +219,7 @@ namespace PersonalDuty
             string outputstr=null;
             foreach (Date_shedule ds in DATElist)
             {
-                outputstr += DCODE + ";" + CHAIR + ";" + ds.OutString() + ";" + FILID + "\n\n";
+                outputstr = ds.OutString(this);
             }
             return outputstr;
 
@@ -221,14 +229,30 @@ namespace PersonalDuty
         {
             /*запись в csv*/
 
-            using (var w = new StreamWriter("infoclinic_doctshedule.csv", flagwrite, Encoding.UTF8))
+            using (var w = new StreamWriter("infoclinic_doctschedule.csv", flagwrite, Encoding.UTF8))
             {
-                  foreach (Doctors doctor in doctors)               
+              //  w.WriteLine("-1;2017-11-10 00:00:00.0000;16;50;17;10");
+                // w.WriteLine("DATE;ST_HOUR;_ST_MIN;END_HOUR;END_MIN");
+              //  w.Flush();
+                w.WriteLine("-1;;2017-11-10 00:00:00.0000;16;50;17;10;0;0");
+                w.Flush();
+                
+                 
+                foreach (Doctors doctor in doctors)               
                 {                    
                     this.InsertDoctShedule(dutyTable, doctor);
                     if (DATElist.Count != 0)
-                        w.WriteLine(this.OutString());
-                    w.Flush();
+                    {
+                        foreach (Date_shedule ds in DATElist)
+                        {
+                            string outputstr = null;
+                            outputstr = ds.OutString(this);
+                            w.WriteLine(outputstr);
+                            w.Flush();
+                        }
+                      
+                    }
+                 
                 }
             }
             /*запись в csv*/
@@ -239,33 +263,37 @@ namespace PersonalDuty
 
     public class SheduleCollect 
     {
-        List<Shedule> sheduleList = new List<Shedule>();
+        List<Shedule> sheduleList;
 
-        public void InsertShedule(DataTable dutyWithChekTABLE)
+        public void InsertShedule(DataTable dutyWithChekTABLE, DataTable personalDT)
         {
+            sheduleList = new List<Shedule>();
             foreach (DataRow duty in dutyWithChekTABLE.Rows)
             {
                 Shedule tmp = new Shedule();
                 if(duty["BusyTime"].ToString()=="True")
-                sheduleList.Add(tmp.AddShedule(duty));
+                sheduleList.Add(tmp.AddShedule(duty, personalDT));
             }
         }
 
         public void OutToCSV(bool flagwrite)
         {
-            using (var w = new StreamWriter("infoclinic_shedule.csv", flagwrite, Encoding.UTF8))
+            using (var w = new StreamWriter("infoclinic_schedule.csv", flagwrite, Encoding.UTF8))
             {
+                w.WriteLine("-1;2017-11-10 00:00:00.0000;16;50;17;10");
+                // w.WriteLine("DATE;ST_HOUR;_ST_MIN;END_HOUR;END_MIN");
+                w.Flush();
                 if (sheduleList.Count!=0)
                 foreach (Shedule shedule in sheduleList)
                 {
                         if (shedule != null)
                         {
-                            string outputstr = shedule.DCODE +
-                          ";" + shedule.DATE +
+                            string outputstr = "1000"+shedule.ID +
+                          ";" + shedule.DATE.ToString("yyyy-MM-dd HH:mm:ss.fff") +
                           ";" + shedule.ST_HOUR +
                           ";" + shedule.ST_MIN +
                           ";" + shedule.END_HOUR +
-                          ";" + shedule.END_MIN + "\n\n";
+                          ";" + shedule.END_MIN;
                             w.WriteLine(outputstr);
                         }
                         
@@ -277,6 +305,7 @@ namespace PersonalDuty
 
     class Shedule  //занятое время
     {
+        public int ID { get; set; }
        public string DCODE { get; set; }
        public  DateTime DATE { get; set; }
        public   int ST_HOUR { get; set; }
@@ -286,10 +315,11 @@ namespace PersonalDuty
 
            
 
-        public Shedule AddShedule(DataRow dutyRow)
+        public Shedule AddShedule(DataRow dutyRow, DataTable personalDT)
         {
             if (dutyRow["BusyTime"].ToString()=="True")
             {
+                ID = int.Parse(personalDT.Select("IND_CODE = '"+ dutyRow["IND_CODE"].ToString()+"'")[0]["ID"].ToString());
                 DCODE =dutyRow["IND_CODE"].ToString();
                 DATE = DateTime.Parse(dutyRow["DATE"].ToString());
 

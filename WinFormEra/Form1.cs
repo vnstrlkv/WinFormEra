@@ -34,7 +34,7 @@ public partial class Form1 : Form
             button1.Text = "Готово";
             button2.Text = "Назад";
             button2.Hide();
-            clinic.OutToCSV();
+         //   clinic.OutToCSV();
             InitTable();
             MainView();
 
@@ -114,8 +114,15 @@ public partial class Form1 : Form
 
         void InitTable()
         {
+            
             personalDT = WDBF.DBSelect("IND_CODE, FIRST_LAST_NAME", "personal", "");
+            personalDT.Columns.Add(new DataColumn("ID", typeof(int)));
             personalDT.Columns.Add(new DataColumn("Selected", typeof(bool)));
+            int i = 0;
+            foreach (DataRow dt in personalDT.Rows)
+            {
+                dt["ID"] = i++;
+            }
 
             dutyDT.Columns.Add("FIRST_LAST_NAME", typeof(string));
             var duty = WDBF.DBSelect("ind_code, date, st_time, end_time, client_cod", "duty", " WHERE DATE >= {" + DateTime.Parse(DateTime.Today.ToString("MM.dd.yyyy")) + "}");
@@ -147,7 +154,7 @@ public partial class Form1 : Form
             DataTable dutyDTwithChek = dutyDT.Clone(); 
             dutyDTwithChek = (DataTable)dataGridView1.DataSource;
 
-            sheduleCollect.InsertShedule(dutyDTwithChek);
+            sheduleCollect.InsertShedule(dutyDTwithChek, personalDT);
             sheduleCollect.OutToCSV(false);
             
             // doct_shedule.Insert_doct_shedule(dutyDTclone, doctors);
