@@ -163,6 +163,9 @@ namespace PersonalDuty
             END_HOUR = int.Parse(tmpEndTime.Max<DateTime>().ToString("HH"));
             END_MIN = int.Parse(tmpEndTime.Max<DateTime>().ToString("mm"));
             var tmpinteral = tmpEndTime[0] - tmpStTime[0];
+            if (int.Parse(tmpinteral.Minutes.ToString()) == 0 || int.Parse(tmpinteral.Minutes.ToString())>=59)
+                INTERVAL = 30;
+            else
             INTERVAL = int.Parse(tmpinteral.Minutes.ToString());
             return this;
         }
