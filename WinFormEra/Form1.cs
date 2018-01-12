@@ -107,7 +107,12 @@ public partial class Form1 : Form
 
             doctors[0].OutToCSV(doctors, clinic, false); // сюда вставить  добавление доктора в класс для выгрузки в csv
             doct_shedule.OutToCSV(dutyDT, doctors, false);
-                                                           
+
+            DataSet personalDSWithChek=new DataSet();
+            personalDSWithChek.Tables.Add(personalDTclone);
+            // Save to disk
+            personalDSWithChek.WriteXml("personalDSWithChek.xml");
+
             dataGridView1.DataSource = dutyChekList;
         }
 
@@ -150,23 +155,25 @@ public partial class Form1 : Form
         private void button3_Click(object sender, EventArgs e)
         {
 
-            DataSet dataSet = new DataSet();
-            DataTable dutyDTwithChek = dutyDT.Clone(); 
-            dutyDTwithChek = (DataTable)dataGridView1.DataSource;
+          
+            DataTable dutyDTWithChek = dutyDT.Clone(); 
+            dutyDTWithChek = (DataTable)dataGridView1.DataSource;
 
-            sheduleCollect.InsertShedule(dutyDTwithChek, personalDT);
+            sheduleCollect.InsertShedule(dutyDTWithChek, personalDT);
             sheduleCollect.OutToCSV(false);
-            
-            // doct_shedule.Insert_doct_shedule(dutyDTclone, doctors);
-           // doct_shedule.OutCSV();
 
-           // dutyDTclone.Columns.Remove("client_cod");
+            DataSet dutyDSWithChek = new DataSet();
+            dutyDSWithChek.Tables.Add(dutyDTWithChek);
+            // Save to disk
+            dutyDSWithChek.WriteXml("dutyDSWithChek.xml");
+
+            // dutyDTclone.Columns.Remove("client_cod");
             //dataSet.Tables.Add(dutyDTclone);
             // Save to disk
             //dataSet.WriteXml(@"C:\MyDataset.csv");
 
             // Read from disk
-       //     dataSet.ReadXml(@"C:\MyDataset.xml");
+            //     dataSet.ReadXml(@"C:\MyDataset.xml");
 
         }
     }
