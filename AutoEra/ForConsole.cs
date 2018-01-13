@@ -75,7 +75,7 @@ namespace AutoEra
                 }
                 dutyDT = new DataTable();
                 dutyDT.Columns.Add("FIRST_LAST_NAME", typeof(string));
-                DateTime today = DateTime.Today;
+                DateTime today = DateTime.Today.AddDays(1);
                 DateTime lastday = today.AddDays(14);
               
                 var duty = WDBF.DBSelect("ind_code, date, st_time, end_time, client_cod", "duty", " WHERE DATE BETWEEN {" + today.ToString("MM.dd.yyyy") + "} AND  {" + lastday.ToString("MM.dd.yyyy") + "}");
