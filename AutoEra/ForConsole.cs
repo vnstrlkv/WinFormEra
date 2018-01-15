@@ -58,43 +58,52 @@ namespace AutoEra
             //Ниже файлы надо выгружать на фтп
            
         }
-
-        public void InitTable()
+     //   AND  {" + DateTime.Parse(today.AddDays(14).ToString("MM.dd.yyyy")) + "}
+    public bool InitTable()
         {
             personalDT = new DataTable();
+            bool flag = false;
             personalDT = WDBF.DBSelect("IND_CODE, FIRST_LAST_NAME", "personal", "");
-            personalDT.Columns.Add(new DataColumn("ID", typeof(int)));
-            personalDT.Columns.Add(new DataColumn("Selected", typeof(bool)));
-            int i = 0;
-            foreach (DataRow dt in personalDT.Rows)
+            if (personalDT != null)
             {
-                dt["ID"] = i++;
-            }
-            dutyDT = new DataTable();
-            dutyDT.Columns.Add("FIRST_LAST_NAME", typeof(string));
-            var duty = WDBF.DBSelect("ind_code, date, st_time, end_time, client_cod", "duty", " WHERE DATE >= {" + DateTime.Parse(DateTime.Today.ToString("MM.dd.yyyy")) + "}");
-            dutyDT.Merge(duty);
-            dutyDT.Columns.Add("BusyTime", typeof(bool));
-            foreach (DataRow data in dutyDT.Rows)
-            {
-                data[0] = WDBF.DBSelect("FIRST_LAST_NAME", "personal", "WHERE IND_CODE = '" + data[1].ToString() + "'").Rows[0][0].ToString();
-                int k;
-                if (int.TryParse(data[5].ToString(), out k))
+                personalDT.Columns.Add(new DataColumn("ID", typeof(int)));
+                personalDT.Columns.Add(new DataColumn("Selected", typeof(bool)));
+                int i = 0;
+                foreach (DataRow dt in personalDT.Rows)
                 {
-                    data[6] = true;
+                    dt["ID"] = i++;
                 }
+                dutyDT = new DataTable();
+                dutyDT.Columns.Add("FIRST_LAST_NAME", typeof(string));
+                DateTime today = DateTime.Today.AddDays(1);
+                DateTime lastday = today.AddDays(14);
+              
+                var duty = WDBF.DBSelect("ind_code, date, st_time, end_time, client_cod", "duty", " WHERE DATE BETWEEN {" + today.ToString("MM.dd.yyyy") + "} AND  {" + lastday.ToString("MM.dd.yyyy") + "}");
+                dutyDT.Merge(duty);
+                dutyDT.Columns.Add("BusyTime", typeof(bool));
+                foreach (DataRow data in dutyDT.Rows)
+                {
+                    data[0] = WDBF.DBSelect("FIRST_LAST_NAME", "personal", "WHERE IND_CODE = '" + data[1].ToString() + "'").Rows[0][0].ToString();
+                    int k;
+                    if (int.TryParse(data[5].ToString(), out k))
+                    {
+                        data[6] = true;
+                    }
+                }
+                CheckFakeTime();
+                flag = true;
             }
-            CheckFakeTime();
+            return flag;
         }
 
         public void CheckFakeTime()
         {
-            Stopwatch stopwatch = new Stopwatch();
+        
             //  printDataTable(dutyDT);
 
            //   printDataTable(dutyDTWithChek);
           //  Console.Read();
-            stopwatch.Start();
+           
         //    for (int j = 0; j < dutyDTWithChek.Rows.Count; j++)
        //         Console.WriteLine("j = {0}    {1}", dutyDTWithChek.Rows[j][5].ToString(), dutyDTWithChek.Rows[j][5]);
          //   Console.Read();
@@ -111,14 +120,10 @@ namespace AutoEra
 
                     }
             }
-
-
-
-            stopwatch.Stop();
+    
 
             //Время, за которое выполнился Ваш код будет храниться в этой переменной:
-            Console.WriteLine(stopwatch.Elapsed);
-
+     
         }
 
       public  void ToFTP()
@@ -171,11 +176,21 @@ namespace AutoEra
                 strm.Close();
                 fs.Close();
                 Console.WriteLine("Выгрузка Успешна в:{0}", DateTime.Now);
+                using (var w = new StreamWriter("log.txt", true, Encoding.UTF8))
+                {
+                    w.WriteLine("{0} Console : Выгрузка успешна ", DateTime.Now );
+                    w.Flush();
+                }
             }
             catch (Exception ex)
             {
 
                 Console.WriteLine(ex.Message, "Ошибка");
+                using (var w = new StreamWriter("log.txt", true, Encoding.UTF8))
+                {
+                    w.WriteLine("{0} Console : ", DateTime.Now+ex.Message);
+                    w.Flush();
+                }
 
             }
 

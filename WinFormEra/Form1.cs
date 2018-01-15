@@ -65,7 +65,9 @@ public partial class Form1 : Form
             DutyCheked();
             button2.Show();
             button1.Hide();
+            button3.Text = "Готово";
             button3.Show();
+
       
             //   Form2 next = new Form2();            
             //   this.Hide();
@@ -106,9 +108,7 @@ public partial class Form1 : Form
                 }
             }
 
-            doctors[0].OutToCSV(doctors, clinic, false); // сюда вставить  добавление доктора в класс для выгрузки в csv
-            doct_shedule.OutToCSV(dutyDT, doctors, false);
-
+         
             DataSet personalDSWithChek=new DataSet();
             personalDSWithChek.Tables.Add(personalDTclone);
             // Save to disk
@@ -130,8 +130,13 @@ public partial class Form1 : Form
                 dt["ID"] = i++;
             }
 
+            ChekLastPersonal();
+
             dutyDT.Columns.Add("FIRST_LAST_NAME", typeof(string));
-            var duty = WDBF.DBSelect("ind_code, date, st_time, end_time, client_cod", "duty", " WHERE DATE >= {" + DateTime.Parse(DateTime.Today.ToString("MM.dd.yyyy")) + "}");
+            DateTime today = DateTime.Today.AddDays(1);
+            DateTime lastday = today.AddDays(14);
+
+            var duty = WDBF.DBSelect("ind_code, date, st_time, end_time, client_cod", "duty", " WHERE DATE BETWEEN {" + today.ToString("MM.dd.yyyy") + "} AND  {" + lastday.ToString("MM.dd.yyyy") + "}");
             dutyDT.Merge(duty);
             dutyDT.Columns.Add("BusyTime", typeof(bool));
             foreach (DataRow data in dutyDT.Rows)
@@ -145,6 +150,34 @@ public partial class Form1 : Form
             }
         }
 
+        void ChekLastPersonal()
+        {
+           
+            try
+            {
+                DataSet personalDSWithChek = new DataSet();
+                personalDSWithChek.ReadXml("personalDSWithChek.xml");
+                DataTable personalDTWithChek = personalDSWithChek.Tables["Table1"];
+                
+                for (int i = 0;i<personalDT.Rows.Count;i++)
+                    for (int j = 0;j < personalDTWithChek.Rows.Count;j++)
+                    {
+
+                        if (personalDT.Rows[i]["First_last_name"].ToString() == personalDTWithChek.Rows[j]["First_last_name"].ToString())
+
+                        {
+                            personalDT.Rows[i]["Selected"] = personalDTWithChek.Rows[j]["Selected"];
+                            break;
+                        }
+                    }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+        }
         void MainView()
         {
             button1.Show();
@@ -161,7 +194,7 @@ public partial class Form1 : Form
             dutyDTWithChek = (DataTable)dataGridView1.DataSource;
 
             sheduleCollect.InsertShedule(dutyDTWithChek, personalDT);
-            sheduleCollect.OutToCSV(false);
+            
 
             DataSet dutyDSWithChek = new DataSet();
             dutyDSWithChek.Tables.Add(dutyDTWithChek);
