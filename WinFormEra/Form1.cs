@@ -169,9 +169,9 @@ public partial class Form1 : Form
             dutyDSWithChek.WriteXml("dutyDSWithChek.xml");
 
 
-            Process prc = new Process(); // Объявляем объект
-            prc.StartInfo.FileName = "AutoEra.exe"; // Полное имя файла, включая путь к файлу, к примеру "C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe", не забудь про собаку "@", что бы в строку слежи можно было записывать
-            prc.Start(); // Запускаем процесс
+         //   Process prc = new Process(); // Объявляем объект
+        //    prc.StartInfo.FileName = "AutoEra.exe"; // Полное имя файла, включая путь к файлу, к примеру "C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe", не забудь про собаку "@", что бы в строку слежи можно было записывать
+          //  prc.Start(); // Запускаем процесс
             this.Close(); 
 
 
