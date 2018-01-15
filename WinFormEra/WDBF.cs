@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Data;
 using System.Windows.Forms;
 using System.Data.OleDb;
+using System.IO;
 
 namespace WDBFNS
 {
@@ -46,7 +47,11 @@ namespace WDBFNS
         {
             //  this._connection = new System.Data.Odbc.OdbcConnection();
             this._connection = new OleDbConnection();
-            _connection.ConnectionString = @"Provider=vfpoledb;Data Source=D:\PHOENIX\dbc\phoenix.dbc;Collating Sequence=machine; Exclusive=No";
+            string conf ;
+            using (StreamReader w = new StreamReader("conf.txt"))
+                conf = w.ReadLine();
+            
+            _connection.ConnectionString = @"Provider=vfpoledb;"+conf+";Collating Sequence=machine; Exclusive=No";
         }
     }
 }

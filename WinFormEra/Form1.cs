@@ -10,6 +10,7 @@ using PersonalDuty;
 using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Threading;
 using WDBFNS;
 namespace WinFormEra
 {
@@ -32,26 +33,48 @@ public partial class Form1 : Form
          //   button1.Anchor = AnchorStyles.Top;
               dataGridView1.Dock=(DockStyle.Top);
           //  button1.Dock = DockStyle.Top;
-            button1.Text = "Готово";
+            button1.Text = "Далее";
             button2.Text = "Назад";
+            button3.Text = "Готово";
+            button1.Hide();
+            button3.Hide();
             button2.Hide();
-         //   clinic.OutToCSV();
-            InitTable();
-            MainView();
 
-
-
-
-
-            //         DataTable dutyDT=new DataTable();
-         
-
-
-            //  dataGridView1.AutoGenerateColumns = false;
-          //  dataGridView1.EditingPanel.BorderStyle = BorderStyle.Fixed3D;
-        //    dataGridView1.DataSource = dutyDT;
+            BackgroundWorker backgroundWorker1 = new BackgroundWorker();
+            backgroundWorker1.DoWork += backgroundWorker1_DoWork;
+            backgroundWorker1.RunWorkerCompleted += backgroundWorker1_RunWorkerCompleted;
+            backgroundWorker1.RunWorkerAsync();
 
         }
+
+        
+        
+
+    private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+    {
+            //заполняем datagridview1 инфой из базы
+           InitTable();
+    }
+    private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+    {
+            //после выполнения заполнения datagridview1 закроем финормационное окошко
+            MainView();
+    }
+
+
+
+
+
+    void MainView()
+        {
+           
+            button2.Hide();
+            button3.Hide();
+            dataGridView1.DataSource = personalDT;
+            dataGridView1.Show();
+            button1.Show();
+        }
+
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -68,11 +91,6 @@ public partial class Form1 : Form
             button3.Text = "Готово";
             button3.Show();
 
-      
-            //   Form2 next = new Form2();            
-            //   this.Hide();
-            //   next.Owner = this;
-            //   next.Show();
 
         }
 
@@ -108,19 +126,16 @@ public partial class Form1 : Form
                 }
             }
 
-         
-            DataSet personalDSWithChek=new DataSet();
-            personalDSWithChek.Tables.Add(personalDTclone);
-            // Save to disk
-            personalDSWithChek.WriteXml("personalDSWithChek.xml");
 
+            personalDT = personalDTclone.Copy();
+                    
+            
             dataGridView1.DataSource = dutyChekList;
         }
 
 
-        void InitTable()
-        {
-            
+         void InitTable()
+        {            
             personalDT = WDBF.DBSelect("IND_CODE, FIRST_LAST_NAME", "personal", "");
             personalDT.Columns.Add(new DataColumn("ID", typeof(int)));
             personalDT.Columns.Add(new DataColumn("Selected", typeof(bool)));
@@ -133,7 +148,7 @@ public partial class Form1 : Form
             ChekLastPersonal();
 
             dutyDT.Columns.Add("FIRST_LAST_NAME", typeof(string));
-            DateTime today = DateTime.Today.AddDays(1);
+            DateTime today = DateTime.Today;
             DateTime lastday = today.AddDays(14);
 
             var duty = WDBF.DBSelect("ind_code, date, st_time, end_time, client_cod", "duty", " WHERE DATE BETWEEN {" + today.ToString("MM.dd.yyyy") + "} AND  {" + lastday.ToString("MM.dd.yyyy") + "}");
@@ -148,6 +163,7 @@ public partial class Form1 : Form
                     data[6] = true;
                 }
             }
+
         }
 
         void ChekLastPersonal()
@@ -178,13 +194,7 @@ public partial class Form1 : Form
             }
 
         }
-        void MainView()
-        {
-            button1.Show();
-            button2.Hide();
-            button3.Hide();
-            dataGridView1.DataSource = personalDT;
-        }
+        
 
         private void button3_Click(object sender, EventArgs e)
         {
@@ -200,11 +210,16 @@ public partial class Form1 : Form
             dutyDSWithChek.Tables.Add(dutyDTWithChek);
             // Save to disk
             dutyDSWithChek.WriteXml("dutyDSWithChek.xml");
+                  dutyDSWithChek.WriteXml(@"\\192.168.1.100\reg\Out\dutyDSWithChek.xml");
 
+            DataSet personalDSWithChek = new DataSet();
+            personalDSWithChek.Tables.Add(personalDT);
+            personalDSWithChek.WriteXml("personalDSWithChek.xml");
+            personalDSWithChek.WriteXml(@"\\192.168.1.100\reg\Out\personalDSWithChek.xml");
 
-         //   Process prc = new Process(); // Объявляем объект
-        //    prc.StartInfo.FileName = "AutoEra.exe"; // Полное имя файла, включая путь к файлу, к примеру "C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe", не забудь про собаку "@", что бы в строку слежи можно было записывать
-          //  prc.Start(); // Запускаем процесс
+            //   Process prc = new Process(); // Объявляем объект
+            //    prc.StartInfo.FileName = "AutoEra.exe"; // Полное имя файла, включая путь к файлу, к примеру "C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe", не забудь про собаку "@", что бы в строку слежи можно было записывать
+            //   prc.Start(); // Запускаем процесс
             this.Close(); 
 
 

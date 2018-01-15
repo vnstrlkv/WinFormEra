@@ -75,7 +75,7 @@ namespace AutoEra
                 }
                 dutyDT = new DataTable();
                 dutyDT.Columns.Add("FIRST_LAST_NAME", typeof(string));
-                DateTime today = DateTime.Today.AddDays(1);
+                DateTime today = DateTime.Today;
                 DateTime lastday = today.AddDays(14);
               
                 var duty = WDBF.DBSelect("ind_code, date, st_time, end_time, client_cod", "duty", " WHERE DATE BETWEEN {" + today.ToString("MM.dd.yyyy") + "} AND  {" + lastday.ToString("MM.dd.yyyy") + "}");
@@ -176,7 +176,7 @@ namespace AutoEra
                 strm.Close();
                 fs.Close();
                 Console.WriteLine("Выгрузка Успешна в:{0}", DateTime.Now);
-                using (var w = new StreamWriter("log.txt", true, Encoding.UTF8))
+                using (var w = new StreamWriter("log_ok.txt", true, Encoding.UTF8))
                 {
                     w.WriteLine("{0} Console : Выгрузка успешна ", DateTime.Now );
                     w.Flush();
