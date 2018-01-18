@@ -13,7 +13,7 @@ namespace AutoEra
     class Program
     {
 
-       static ForConsole test = new ForConsole();
+        static ForConsole test = new ForConsole();
 
 
         static void Main(string[] args)
@@ -27,8 +27,8 @@ namespace AutoEra
             }
             MonitorDirectory(path);
 
-           
-            
+
+
             Console.ReadKey();
         }
         private static void MonitorDirectory(string path)
@@ -40,7 +40,7 @@ namespace AutoEra
             fileSystemWatcher.Path = path;
             fileSystemWatcher.NotifyFilter = NotifyFilters.LastWrite;
             fileSystemWatcher.Filter = "duty.FPT";
-            fileSystemWatcher.Changed+= FileSystemWatcher_Changed;
+            fileSystemWatcher.Changed += FileSystemWatcher_Changed;
             fileSystemWatcher.EnableRaisingEvents = true;
 
         }
@@ -49,10 +49,10 @@ namespace AutoEra
         {
 
             ChangeDB();
-            
+
         }
 
-      static  void ChangeDB()
+        static void ChangeDB()
         {
             Console.Clear();
             if (test.InitTable())
@@ -65,7 +65,7 @@ namespace AutoEra
                 Console.WriteLine("База была занята, попробуем позже =)");
                 using (var w = new StreamWriter("log.txt", true, Encoding.UTF8))
                 {
-                    w.WriteLine("{0} База была занята, попробуем позже =)",DateTime.Now);
+                    w.WriteLine("{0} База была занята, попробуем позже =)", DateTime.Now);
                     w.Flush();
                 }
             }

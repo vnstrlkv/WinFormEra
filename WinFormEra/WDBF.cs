@@ -10,7 +10,7 @@ using System.IO;
 
 namespace WDBFNS
 {
-  public  class WDBF
+    public class WDBF
     {
         // private OdbcConnection _connection = null;
         private OleDbConnection _connection = null;
@@ -36,10 +36,10 @@ namespace WDBFNS
             }
             return dt;
         }
-        public DataTable DBSelect(string command,string dbpath, string command2)
+        public DataTable DBSelect(string command, string dbpath, string command2)
         {
-         //   DateTime tm = DateTime.Parse(DateTime.Today.ToString("dd.MM.yyyy"));
-        //    MessageBox.Show(DateTime.Today.ToString("dd.MM.yyyy"));
+            //   DateTime tm = DateTime.Parse(DateTime.Today.ToString("dd.MM.yyyy"));
+            //    MessageBox.Show(DateTime.Today.ToString("dd.MM.yyyy"));
             return Execute("SELECT " + command + " FROM " + dbpath + " " + command2);
         }
 
@@ -47,11 +47,11 @@ namespace WDBFNS
         {
             //  this._connection = new System.Data.Odbc.OdbcConnection();
             this._connection = new OleDbConnection();
-            string conf ;
+            string conf;
             using (StreamReader w = new StreamReader("conf.txt"))
                 conf = w.ReadLine();
-            
-            _connection.ConnectionString = @"Provider=vfpoledb;"+conf+";Collating Sequence=machine; Exclusive=No";
+
+            _connection.ConnectionString = @"Provider=vfpoledb;" + conf + ";Collating Sequence=machine; Exclusive=No";
         }
     }
 }

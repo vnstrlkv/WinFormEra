@@ -10,7 +10,7 @@ using System.Data.OleDb;
 
 namespace WDBFNS
 {
-  public  class WDBF
+    public class WDBF
     {
         // private OdbcConnection _connection = null;
         private OleDbConnection _connection = null;
@@ -34,17 +34,17 @@ namespace WDBFNS
                     Console.WriteLine(e.Message);
                     using (var w = new StreamWriter("log.txt", true, Encoding.UTF8))
                     {
-                        w.WriteLine("{0} WDBF : ", DateTime.Now + e.Message);
+                        w.WriteLine(" WDBF : {0}", DateTime.Now + "  "+ e.Message);
                         w.Flush();
                     }
                 }
             }
             return dt;
         }
-        public DataTable DBSelect(string command,string dbpath, string command2)
+        public DataTable DBSelect(string command, string dbpath, string command2)
         {
-         //   DateTime tm = DateTime.Parse(DateTime.Today.ToString("dd.MM.yyyy"));
-        //    MessageBox.Show(DateTime.Today.ToString("dd.MM.yyyy"));
+            //   DateTime tm = DateTime.Parse(DateTime.Today.ToString("dd.MM.yyyy"));
+            //    MessageBox.Show(DateTime.Today.ToString("dd.MM.yyyy"));
             return Execute("SELECT " + command + " FROM " + dbpath + " " + command2);
         }
 

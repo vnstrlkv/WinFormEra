@@ -25,14 +25,14 @@ namespace AutoEra
         DataTable personalDTWithChek;
         DataTable dutyDTWithChek;
 
-       public void Start()
+        public void Start()
         {
-             personalDSWithChek = new DataSet();
+            personalDSWithChek = new DataSet();
             personalDSWithChek.ReadXml("personalDSWithChek.xml");
-             dutyDSWithChek = new DataSet();
+            dutyDSWithChek = new DataSet();
             dutyDSWithChek.ReadXml("dutyDSWithChek.xml");
             personalDTWithChek = personalDSWithChek.Tables["Table1"];
-             dutyDTWithChek = dutyDSWithChek.Tables["Table1"];
+            dutyDTWithChek = dutyDSWithChek.Tables["Table1"];
 
         }
 
@@ -52,14 +52,12 @@ namespace AutoEra
                     }
                 }
             }
-    
+
             sheduleCollect.InsertShedule(dutyDT, personalDTWithChek);
 
-            //Ниже файлы надо выгружать на фтп
-           
         }
-     //   AND  {" + DateTime.Parse(today.AddDays(14).ToString("MM.dd.yyyy")) + "}
-    public bool InitTable()
+        //   AND  {" + DateTime.Parse(today.AddDays(14).ToString("MM.dd.yyyy")) + "}
+        public bool InitTable()
         {
             personalDT = new DataTable();
             bool flag = false;
@@ -76,57 +74,57 @@ namespace AutoEra
                 dutyDT = new DataTable();
                 dutyDT.Columns.Add("FIRST_LAST_NAME", typeof(string));
                 DateTime today = DateTime.Today;
-                DateTime lastday = today.AddDays(14);
-              
+                DateTime lastday = today.AddDays(8);
+
                 var duty = WDBF.DBSelect("ind_code, date, st_time, end_time, client_cod", "duty", " WHERE DATE BETWEEN {" + today.ToString("MM.dd.yyyy") + "} AND  {" + lastday.ToString("MM.dd.yyyy") + "}");
-                dutyDT.Merge(duty);
-                dutyDT.Columns.Add("BusyTime", typeof(bool));
-                foreach (DataRow data in dutyDT.Rows)
+                if (duty != null)
                 {
-                    data[0] = WDBF.DBSelect("FIRST_LAST_NAME", "personal", "WHERE IND_CODE = '" + data[1].ToString() + "'").Rows[0][0].ToString();
-                    int k;
-                    if (int.TryParse(data[5].ToString(), out k))
+                    dutyDT.Merge(duty);
+                    dutyDT.Columns.Add("BusyTime", typeof(bool));
+                    foreach (DataRow data in dutyDT.Rows)
                     {
-                        data[6] = true;
+                        data[0] = WDBF.DBSelect("FIRST_LAST_NAME", "personal", "WHERE IND_CODE = '" + data[1].ToString() + "'").Rows[0][0].ToString();
+                        string s = DateTime.Parse(data["DATE"].ToString()).ToString("dd.MM.yyyy") + " " + data["st_time"].ToString();
+                        if (DateTime.Parse(s) <= DateTime.Now)
+                        {
+                            data[6] = true;
+                            continue;
+                        }
+                        int k;
+                        if (int.TryParse(data[5].ToString(), out k))
+                        {
+                            data[6] = true;
+                        }
                     }
+                    CheckFakeTime();
+                    flag = true;
                 }
-                CheckFakeTime();
-                flag = true;
             }
             return flag;
         }
 
         public void CheckFakeTime()
         {
-        
-            //  printDataTable(dutyDT);
 
-           //   printDataTable(dutyDTWithChek);
-          //  Console.Read();
-           
-        //    for (int j = 0; j < dutyDTWithChek.Rows.Count; j++)
-       //         Console.WriteLine("j = {0}    {1}", dutyDTWithChek.Rows[j][5].ToString(), dutyDTWithChek.Rows[j][5]);
-         //   Console.Read();
 
             for (int i = 0; i < dutyDT.Rows.Count; i++)
             {
-                for (int j=0;j<dutyDTWithChek.Rows.Count;j++)
-                    {
-                        if ((dutyDTWithChek.Rows[j]["BusyTime"].ToString() == "true" || dutyDTWithChek.Rows[j]["BusyTime"].ToString() == "True") && (dutyDT.Rows[i]["BusyTime"].ToString() != "true" || dutyDT.Rows[i]["BusyTime"].ToString() != "True"))
-                            if (dutyDT.Rows[i]["ind_code"].ToString() == dutyDTWithChek.Rows[j]["ind_code"].ToString())
-                                if (DateTime.Parse(dutyDT.Rows[i]["date"].ToString()).ToString("yyyyMMdd") == DateTime.Parse(dutyDTWithChek.Rows[j]["date"].ToString()).ToString("yyyyMMdd"))
-                                    if (dutyDT.Rows[i]["st_time"].ToString() == dutyDTWithChek.Rows[j]["st_time"].ToString())
-                                        dutyDT.Rows[i]["BusyTime"] = dutyDTWithChek.Rows[j]["BusyTime"];
-
-                    }
+                for (int j = 0; j < dutyDTWithChek.Rows.Count; j++)
+                {
+                    if ((dutyDTWithChek.Rows[j]["BusyTime"].ToString() == "true" || dutyDTWithChek.Rows[j]["BusyTime"].ToString() == "True") && (dutyDT.Rows[i]["BusyTime"].ToString() != "true" || dutyDT.Rows[i]["BusyTime"].ToString() != "True"))
+                        if (dutyDT.Rows[i]["ind_code"].ToString() == dutyDTWithChek.Rows[j]["ind_code"].ToString())
+                            if (DateTime.Parse(dutyDT.Rows[i]["date"].ToString()).ToString("yyyyMMdd") == DateTime.Parse(dutyDTWithChek.Rows[j]["date"].ToString()).ToString("yyyyMMdd"))
+                                if (dutyDT.Rows[i]["st_time"].ToString() == dutyDTWithChek.Rows[j]["st_time"].ToString())
+                                    dutyDT.Rows[i]["BusyTime"] = dutyDTWithChek.Rows[j]["BusyTime"];
+                }
             }
-    
+
 
             //Время, за которое выполнился Ваш код будет храниться в этой переменной:
-     
+
         }
 
-      public  void ToFTP()
+        public void ToFTP()
         {
             doctorsList[0].OutToCSV(doctorsList, clinic, false);
             doct_shedule.OutToCSV(dutyDT, doctorsList, false);
@@ -136,10 +134,10 @@ namespace AutoEra
             FTPUploadFile("infoclinic_doctors.csv");
             FTPUploadFile("infoclinic_doctschedule.csv");
             FTPUploadFile("infoclinic_schedule.csv");
-           
+
 
         }
-            private void FTPUploadFile(string filename)
+        private void FTPUploadFile(string filename)
         {
             FileInfo fileInf = new FileInfo(filename);
             string uri = "ftp://" + "prodoctorov.ru:2121" + "/" + fileInf.Name;
@@ -178,7 +176,7 @@ namespace AutoEra
                 Console.WriteLine("Выгрузка Успешна в:{0}", DateTime.Now);
                 using (var w = new StreamWriter("log_ok.txt", true, Encoding.UTF8))
                 {
-                    w.WriteLine("{0} Console : Выгрузка успешна ", DateTime.Now );
+                    w.WriteLine("{0} Console : Выгрузка успешна ", DateTime.Now);
                     w.Flush();
                 }
             }
@@ -188,7 +186,7 @@ namespace AutoEra
                 Console.WriteLine(ex.Message, "Ошибка");
                 using (var w = new StreamWriter("log.txt", true, Encoding.UTF8))
                 {
-                    w.WriteLine("{0} Console : ", DateTime.Now+ex.Message);
+                    w.WriteLine("{0} Console : ", DateTime.Now + ex.Message);
                     w.Flush();
                 }
 
@@ -196,8 +194,8 @@ namespace AutoEra
 
         }
 
-    
-                       
+
+
 
     }
 }
