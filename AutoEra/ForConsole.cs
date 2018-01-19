@@ -139,6 +139,7 @@ namespace AutoEra
         }
         private void FTPUploadFile(string filename)
         {
+            
             FileInfo fileInf = new FileInfo(filename);
             string uri = "ftp://" + "prodoctorov.ru:2121" + "/" + fileInf.Name;
             FtpWebRequest reqFTP;

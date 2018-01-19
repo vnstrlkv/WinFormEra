@@ -25,6 +25,7 @@ namespace AutoEra
                 test.InsertDoc();
                 test.ToFTP();
             }
+            ChangeDB();
             MonitorDirectory(path);
 
 
