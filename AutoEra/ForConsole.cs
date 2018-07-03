@@ -81,9 +81,14 @@ namespace AutoEra
                 {
                     dutyDT.Merge(duty);
                     dutyDT.Columns.Add("BusyTime", typeof(bool));
-                    foreach (DataRow data in dutyDT.Rows)
+                    string m;
+                    if (dutyDT.Rows[0]!= null)
+                        foreach (DataRow data in dutyDT.Rows)
                     {
-                        data[0] = WDBF.DBSelect("FIRST_LAST_NAME", "personal", "WHERE IND_CODE = '" + data[1].ToString() + "'").Rows[0][0].ToString();
+
+                            DataTable tmp = WDBF.DBSelect("FIRST_LAST_NAME", "personal", "WHERE IND_CODE = '" + data[1].ToString() + "'");
+                            if (tmp.Rows.Count>0)
+                        data[0] = tmp.Rows[0][0].ToString();
                         string s = DateTime.Parse(data["DATE"].ToString()).ToString("dd.MM.yyyy") + " " + data["st_time"].ToString();
                         if (DateTime.Parse(s) <= DateTime.Now)
                         {
