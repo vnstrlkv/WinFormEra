@@ -81,7 +81,7 @@ namespace AutoEra
                 {
                     dutyDT.Merge(duty);
                     dutyDT.Columns.Add("BusyTime", typeof(bool));
-                    string m;
+                    
                     if (dutyDT.Rows[0]!= null)
                         foreach (DataRow data in dutyDT.Rows)
                     {
