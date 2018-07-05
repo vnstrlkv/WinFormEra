@@ -101,7 +101,7 @@ namespace AutoEra
                             data[6] = true;
                         }
                     }
-                    CheckFakeTime();
+                 //   CheckFakeTime();
                     flag = true;
                 }
             }

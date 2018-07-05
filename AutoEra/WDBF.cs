@@ -37,6 +37,7 @@ namespace WDBFNS
                         w.WriteLine(" WDBF : {0}", DateTime.Now + "  "+ e.Message);
                         w.Flush();
                         dt = null;
+                        _connection.Close();
                     }
                 }
             }
