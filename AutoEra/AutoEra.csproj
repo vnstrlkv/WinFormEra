@@ -43,6 +43,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DocDoc\Clinics.cs" />
+    <Compile Include="DocDoc\Doctors.cs" />
+    <Compile Include="DocDoc\Slots.cs" />
     <Compile Include="ForConsole.cs" />
     <Compile Include="PersonDuty.cs" />
     <Compile Include="Program.cs" />
