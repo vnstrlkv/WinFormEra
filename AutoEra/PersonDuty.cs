@@ -323,8 +323,8 @@ namespace PersonalDuty
             if (dutyRow["BusyTime"].ToString() == "True")
             {
                 DataRow[] tmp = personalDT.Select("IND_CODE = '" + dutyRow["IND_CODE"].ToString() + "'");
-                if(tmp.Length>0)
-                ID = int.Parse(tmp[0]["ID"].ToString());
+                if (tmp.Length > 0)
+                    ID = int.Parse(tmp[0]["ID"].ToString());
                 DCODE = dutyRow["IND_CODE"].ToString();
                 DATE = DateTime.Parse(dutyRow["DATE"].ToString());
 

@@ -8,13 +8,14 @@ using PersonalDuty;
 using System.IO;
 using WDBFNS;
 using AutoEra;
+using System.Threading;
 namespace AutoEra
 {
     class Program
     {
 
         static ForConsole test = new ForConsole();
-
+        static System.Timers.Timer t;
 
         static void Main(string[] args)
         {
@@ -25,13 +26,38 @@ namespace AutoEra
                 test.InsertDoc();
                 test.ToFTP();
             }
-           // ChangeDB();
-            MonitorDirectory(path);
+            // ChangeDB();
+            //  MonitorDirectory(path);
+
+
+            t = new System.Timers.Timer();
+            t.AutoReset = false;
+            t.Elapsed += new System.Timers.ElapsedEventHandler(t_Elapsed);
+            t.Interval = GetInterval();
+            t.Start();
+            Console.ReadLine();
 
 
 
-            Console.ReadKey();
+
+            // Console.ReadKey();
         }
+
+        static double GetInterval()
+        {
+            //    DateTime now = DateTime.Now;
+            return 1080000;
+        }
+
+        static void t_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            Console.WriteLine(DateTime.Now.ToString("o"));
+            ChangeDB();
+            t.Interval = GetInterval();
+            t.Start();
+        }
+
+
         private static void MonitorDirectory(string path)
 
         {
@@ -49,7 +75,7 @@ namespace AutoEra
 
         {
 
-            ChangeDB();
+            // ChangeDB();
 
         }
 
