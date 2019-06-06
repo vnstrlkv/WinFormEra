@@ -9,6 +9,7 @@ using PersonalDuty;
 using System.Diagnostics;
 using System.Net;
 using System.IO;
+using System.Xml.Serialization;
 namespace AutoEra
 {
     class ForConsole
@@ -24,7 +25,11 @@ namespace AutoEra
         DataSet dutyDSWithChek;
         DataTable personalDTWithChek;
         DataTable dutyDTWithChek;
-
+        public DocDoc.Clinics DocDocClinics;
+        public DocDoc.Doctors DocDocDoctors;
+        public DocDoc.Slots DocDocSlots;
+       
+        
         public void Start()
         {
             personalDSWithChek = new DataSet();
@@ -33,11 +38,17 @@ namespace AutoEra
             dutyDSWithChek.ReadXml("dutyDSWithChek.xml");
             personalDTWithChek = personalDSWithChek.Tables["Table1"];
             dutyDTWithChek = dutyDSWithChek.Tables["Table1"];
+            DocDocClinics=new DocDoc.Clinics();
+            DocDocClinics.Clinic=new List<DocDoc.Clinic>();
+            DocDocClinics.Clinic.Add(new DocDoc.Clinic("1","Медицинский центр Эра","(383)2-840-840","Новосибирск"));
+
 
         }
 
         public void InsertDoc()
         {
+            DocDocDoctors=new DocDoc.Doctors();
+            DocDocDoctors.Doctor=new List<DocDoc.Doctor>();
             doctorsList = new List<Doctors>();
             sheduleCollect = new SheduleCollect();
             doct_shedule = new Doct_shedule();
@@ -49,11 +60,18 @@ namespace AutoEra
                     {
                         Doctors tmp = new Doctors();
                         doctorsList.Add(tmp.InsertDoctor(data, clinic));
+                        DocDocDoctors.Doctor.Add(new DocDoc.Doctor(data,DocDocClinics.Clinic[0]));
                     }
                 }
             }
 
             sheduleCollect.InsertShedule(dutyDT, personalDTWithChek);
+            DocDocSlots=new DocDoc.Slots();
+            DocDocSlots.Slot=new List<DocDoc.Slot>(); 
+            foreach (Shedule sh in sheduleCollect.sheduleList)
+                {
+                    DocDocSlots.Slot.Add(new DocDoc.Slot(sh));
+                }
 
         }
         //   AND  {" + DateTime.Parse(today.AddDays(14).ToString("MM.dd.yyyy")) + "}
@@ -128,30 +146,68 @@ namespace AutoEra
             //Время, за которое выполнился Ваш код будет храниться в этой переменной:
 
         }
+        
+        public void ToXML()
+            {
+            XmlSerializer formatterClinics = new XmlSerializer(typeof(DocDoc.Clinics));
+            XmlSerializer formatterDoctors = new XmlSerializer(typeof(DocDoc.Doctors));
+            XmlSerializer formatterSlots = new XmlSerializer(typeof(DocDoc.Slots));
+          
+            using (FileStream fs = new FileStream("Clinics.xml", FileMode.OpenOrCreate))
+            {
+               formatterClinics.Serialize(fs, DocDocClinics);
+ 
+                Console.WriteLine("Объект сериализован");
+            }
+            
+            using (FileStream fs = new FileStream("Doctors.xml", FileMode.OpenOrCreate))
+            {
+               formatterDoctors.Serialize(fs, DocDocDoctors);
+ 
+                Console.WriteLine("Объект сериализован");
+            }
+            
+            using (FileStream fs = new FileStream("Slots.xml", FileMode.OpenOrCreate))
+            {
+               formatterSlots.Serialize(fs, DocDocSlots);
+ 
+                Console.WriteLine("Объект сериализован");
+            }
+
+
+            }
 
         public void ToFTP()
         {
             doctorsList[0].OutToCSV(doctorsList, clinic, false);
             doct_shedule.OutToCSV(dutyDT, doctorsList, false);
             sheduleCollect.OutToCSV(false);
+            INIManager Ftp = new INIManager("c:\\config.ini");
+            Ftp.WritePrivateString("FTP", "124123", "444");
+            string loginProdoctorov=Ftp.GetPrivateString("FTP","logPD");
+            string passwordProdoctorov= Ftp.GetPrivateString("FTP", "pasPD");
+            string loginDocDoc= Ftp.GetPrivateString("FTP", "logDoc");
+            string passwordDocDoc= Ftp.GetPrivateString("FTP", "logPas");
 
-
-            FTPUploadFile("infoclinic_doctors.csv");
-            FTPUploadFile("infoclinic_doctschedule.csv");
-            FTPUploadFile("infoclinic_schedule.csv");
+            FTPUploadFile("infoclinic_doctors.csv", "prodoctorov.ru:2121",loginProdoctorov,passwordProdoctorov);
+            FTPUploadFile("infoclinic_doctschedule.csv", "prodoctorov.ru:2121",loginProdoctorov,passwordProdoctorov);
+            FTPUploadFile("infoclinic_schedule.csv", "prodoctorov.ru:2121",loginProdoctorov,passwordProdoctorov);
+            FTPUploadFile("doctors.xml","", loginDocDoc, passwordDocDoc);
+            FTPUploadFile("clinics.xml","", loginDocDoc, passwordDocDoc);
+            FTPUploadFile("slots.xml","", loginDocDoc, passwordDocDoc);
 
 
         }
-        private void FTPUploadFile(string filename)
+        private void FTPUploadFile(string filename, string adress, string login, string pass)
         {
             
             FileInfo fileInf = new FileInfo(filename);
-            string uri = "ftp://" + "prodoctorov.ru:2121" + "/" + fileInf.Name;
+            string uri = "ftp://" + adress + "/" + fileInf.Name;
             FtpWebRequest reqFTP;
             // Создаем объект FtpWebRequest
-            reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri("ftp://" + "prodoctorov.ru:2121" + "/" + fileInf.Name));
+            reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri("ftp://" + adress + "/" + fileInf.Name));
             // Учетная запись
-            reqFTP.Credentials = new NetworkCredential("med-center-era-novosibirsk", "ca2bceeca9771142a908ea808b60331c");
+            reqFTP.Credentials = new NetworkCredential(login, pass);
             reqFTP.KeepAlive = false;
             // Задаем команду на закачку
             reqFTP.Method = WebRequestMethods.Ftp.UploadFile;
@@ -179,7 +235,7 @@ namespace AutoEra
                 // Закрываем потоки
                 strm.Close();
                 fs.Close();
-                Console.WriteLine("Выгрузка Успешна в:{0}", DateTime.Now);
+                Console.WriteLine("Выгрузка Успешна в"+" "+adress+":{0}", DateTime.Now);
                 using (var w = new StreamWriter("log_ok.txt", true, Encoding.UTF8))
                 {
                     w.WriteLine("{0} Console : Выгрузка успешна ", DateTime.Now);

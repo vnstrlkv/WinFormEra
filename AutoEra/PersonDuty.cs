@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
 
+
 namespace PersonalDuty
 {
     public class Clinic  // список клиник
@@ -266,7 +267,7 @@ namespace PersonalDuty
 
     public class SheduleCollect
     {
-        List<Shedule> sheduleList;
+      public List<Shedule> sheduleList;
 
         public void InsertShedule(DataTable dutyWithChekTABLE, DataTable personalDT)
         {
@@ -275,7 +276,11 @@ namespace PersonalDuty
             {
                 Shedule tmp = new Shedule();
                 if (duty["BusyTime"].ToString() == "True")
+                    {
                     sheduleList.Add(tmp.AddShedule(duty, personalDT));
+
+
+                    }
             }
         }
 
@@ -306,7 +311,7 @@ namespace PersonalDuty
         }
     }
 
-    class Shedule  //занятое время
+   public class Shedule  //занятое время
     {
         public int ID { get; set; }
         public string DCODE { get; set; }
@@ -322,6 +327,7 @@ namespace PersonalDuty
         {
             if (dutyRow["BusyTime"].ToString() == "True")
             {
+                
                 DataRow[] tmp = personalDT.Select("IND_CODE = '" + dutyRow["IND_CODE"].ToString() + "'");
                 if (tmp.Length > 0)
                     ID = int.Parse(tmp[0]["ID"].ToString());

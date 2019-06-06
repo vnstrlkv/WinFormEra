@@ -19,6 +19,18 @@ namespace AutoEra.DocDoc
         public string Phone { get; set; }
         [XmlElement(ElementName = "city")]
         public string City { get; set; }
+
+        public Clinic()
+            {}
+        public Clinic(string id, string name, string phone, string city)
+            {
+            this.Id=id;
+            this.Name=name;
+            this.Phone=phone;
+            this.City=city;
+            }
+
+
     }
 
     [XmlRoot(ElementName = "clinics")]

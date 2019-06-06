@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using PersonalDuty;
 
 namespace AutoEra.DocDoc
 {
@@ -20,6 +21,16 @@ namespace AutoEra.DocDoc
         public DateTime To { get; set; }
         [XmlElement(ElementName = "interval")]
         public string Interval { get; set; }
+
+        public Slot(){}
+        public Slot (Shedule shedule)
+            {
+            DoctorId=shedule.DCODE;
+            ClinicId="1";
+            string s=shedule.DATE.ToString("dd.MM.yyyy")+" "+shedule.ST_HOUR+":"+shedule.ST_MIN+":00";
+            From=DateTime.Parse(s);
+            To=DateTime.Parse(shedule.DATE.ToString("dd.MM.yyyy")+" "+shedule.END_HOUR+":"+shedule.END_MIN+":00");
+            }
     }
 
     [XmlRoot(ElementName = "slots")]

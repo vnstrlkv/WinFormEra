@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using System.Data;
 
 
 namespace AutoEra.DocDoc
@@ -17,6 +18,26 @@ namespace AutoEra.DocDoc
         public string ClinicId { get; set; }
         [XmlElement(ElementName = "name")]
         public string Name { get; set; }
+
+        public Doctor() {}
+
+         public Doctor (DataRow row, Clinic clinic)
+        {
+            if (row["ind_code"] != null)
+            {
+                if (row["FIRST_LAST_NAME"] != null)
+                {
+                    DoctorId = row["ind_code"].ToString();
+                   
+                    Name = row["FIRST_LAST_NAME"].ToString();
+                    ClinicId = clinic.Id;
+                    
+                }
+            }
+        
+        }
+
+
     }
 
     [XmlRoot(ElementName = "doctors")]

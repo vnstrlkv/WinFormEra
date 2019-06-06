@@ -47,6 +47,7 @@
     <Compile Include="DocDoc\Doctors.cs" />
     <Compile Include="DocDoc\Slots.cs" />
     <Compile Include="ForConsole.cs" />
+    <Compile Include="INIManager.cs" />
     <Compile Include="PersonDuty.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

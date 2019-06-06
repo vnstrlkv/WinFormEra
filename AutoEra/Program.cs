@@ -24,6 +24,7 @@ namespace AutoEra
             if (test.InitTable())
             {
                 test.InsertDoc();
+                test.ToXML();
                 test.ToFTP();
             }
             // ChangeDB();
@@ -85,6 +86,7 @@ namespace AutoEra
             if (test.InitTable())
             {
                 test.InsertDoc();
+                test.ToXML();
                 test.ToFTP();
             }
             else
