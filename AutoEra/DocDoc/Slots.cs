@@ -16,20 +16,26 @@ namespace AutoEra.DocDoc
         [XmlElement(ElementName = "clinicId")]
         public string ClinicId { get; set; }
         [XmlElement(ElementName = "from")]
-        public DateTime From { get; set; }
+        public string From { get; set; }
         [XmlElement(ElementName = "to")]
-        public DateTime To { get; set; }
+        public string To { get; set; }
         [XmlElement(ElementName = "interval")]
         public string Interval { get; set; }
 
-        public Slot(){}
-        public Slot (Shedule shedule)
-            {
-            DoctorId=shedule.DCODE;
-            ClinicId="1";
-            string s=shedule.DATE.ToString("dd.MM.yyyy")+" "+shedule.ST_HOUR+":"+shedule.ST_MIN+":00";
-            From=DateTime.Parse(s);
-            To=DateTime.Parse(shedule.DATE.ToString("dd.MM.yyyy")+" "+shedule.END_HOUR+":"+shedule.END_MIN+":00");
+        public Slot() { }
+        public Slot(Shedule shedule)
+        {
+            DoctorId = shedule.DCODE;
+            ClinicId = "1";
+            string ST_MIN = shedule.ST_MIN.ToString();
+            string END_MIN = shedule.END_MIN.ToString();
+            if (shedule.ST_MIN == 0 || shedule.ST_MIN == 5)
+                ST_MIN = ST_MIN + "0";
+            if (shedule.END_MIN == 0 || shedule.END_MIN == 5)
+                END_MIN = END_MIN + "0";
+            string s=shedule.DATE.ToString("yyyy-MM-dd")+" "+shedule.ST_HOUR+":"+ST_MIN;
+            From=s;
+            To=shedule.DATE.ToString("yyyy-MM-dd") +" "+shedule.END_HOUR+":"+END_MIN;
             }
     }
 

@@ -14,8 +14,13 @@ namespace WDBFNS
     {
         // private OdbcConnection _connection = null;
         private OleDbConnection _connection = null;
+
+
+
+
         public DataTable Execute(string command)
         {
+           DataTable t= _connection.GetSchema();
             DataTable dt = null;
             if (_connection != null)
             {
@@ -34,13 +39,20 @@ namespace WDBFNS
                     MessageBox.Show(e.Message);
                 }
             }
-            return dt;
+            //return dt;
+            return t;
         }
         public DataTable DBSelect(string command, string dbpath, string command2)
         {
             //   DateTime tm = DateTime.Parse(DateTime.Today.ToString("dd.MM.yyyy"));
             //    MessageBox.Show(DateTime.Today.ToString("dd.MM.yyyy"));
             return Execute("SELECT " + command + " FROM " + dbpath + " " + command2);
+        }
+
+        public DataTable DBSelectCustom(string command)
+        {
+        
+            return Execute(command);
         }
 
         public WDBF()

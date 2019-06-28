@@ -9,6 +9,7 @@ using System.IO;
 using WDBFNS;
 using AutoEra;
 using System.Threading;
+using AutoEra.Bitrix;
 namespace AutoEra
 {
     class Program
@@ -16,29 +17,36 @@ namespace AutoEra
 
         static ForConsole test = new ForConsole();
         static System.Timers.Timer t;
-
+        static ToBitrix Bitrix = new ToBitrix();
         static void Main(string[] args)
         {
+            
             string path = @"D:\PHOENIX\dbc";
+
             test.Start();
             if (test.InitTable())
             {
                 test.InsertDoc();
                 test.ToXML();
-                test.ToFTP();
+                test.ToFTP();                
+                
             }
             // ChangeDB();
             //  MonitorDirectory(path);
 
+            
+            Bitrix.Start();
 
             t = new System.Timers.Timer();
             t.AutoReset = false;
             t.Elapsed += new System.Timers.ElapsedEventHandler(t_Elapsed);
             t.Interval = GetInterval();
             t.Start();
+             
+            
             Console.ReadLine();
-
-
+           
+    
 
 
             // Console.ReadKey();
@@ -54,6 +62,7 @@ namespace AutoEra
         {
             Console.WriteLine(DateTime.Now.ToString("o"));
             ChangeDB();
+            Bitrix.Start();
             t.Interval = GetInterval();
             t.Start();
         }

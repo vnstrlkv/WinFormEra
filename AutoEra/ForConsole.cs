@@ -152,22 +152,22 @@ namespace AutoEra
             XmlSerializer formatterClinics = new XmlSerializer(typeof(DocDoc.Clinics));
             XmlSerializer formatterDoctors = new XmlSerializer(typeof(DocDoc.Doctors));
             XmlSerializer formatterSlots = new XmlSerializer(typeof(DocDoc.Slots));
-          
-            using (FileStream fs = new FileStream("Clinics.xml", FileMode.OpenOrCreate))
+            
+            using (FileStream fs = new FileStream("Clinics.xml", FileMode.Create))
             {
                formatterClinics.Serialize(fs, DocDocClinics);
  
                 Console.WriteLine("Объект сериализован");
             }
             
-            using (FileStream fs = new FileStream("Doctors.xml", FileMode.OpenOrCreate))
+            using (FileStream fs = new FileStream("Doctors.xml", FileMode.Create))
             {
                formatterDoctors.Serialize(fs, DocDocDoctors);
  
                 Console.WriteLine("Объект сериализован");
             }
             
-            using (FileStream fs = new FileStream("Slots.xml", FileMode.OpenOrCreate))
+            using (FileStream fs = new FileStream("Slots.xml", FileMode.Create))
             {
                formatterSlots.Serialize(fs, DocDocSlots);
  
@@ -183,18 +183,18 @@ namespace AutoEra
             doct_shedule.OutToCSV(dutyDT, doctorsList, false);
             sheduleCollect.OutToCSV(false);
             INIManager Ftp = new INIManager("c:\\config.ini");
-            Ftp.WritePrivateString("FTP", "124123", "444");
+            //Ftp.WritePrivateString("FTP", "124123", "444");
             string loginProdoctorov=Ftp.GetPrivateString("FTP","logPD");
             string passwordProdoctorov= Ftp.GetPrivateString("FTP", "pasPD");
             string loginDocDoc= Ftp.GetPrivateString("FTP", "logDoc");
-            string passwordDocDoc= Ftp.GetPrivateString("FTP", "logPas");
+            string passwordDocDoc= Ftp.GetPrivateString("FTP", "pasDoc");
 
             FTPUploadFile("infoclinic_doctors.csv", "prodoctorov.ru:2121",loginProdoctorov,passwordProdoctorov);
             FTPUploadFile("infoclinic_doctschedule.csv", "prodoctorov.ru:2121",loginProdoctorov,passwordProdoctorov);
             FTPUploadFile("infoclinic_schedule.csv", "prodoctorov.ru:2121",loginProdoctorov,passwordProdoctorov);
-            FTPUploadFile("doctors.xml","", loginDocDoc, passwordDocDoc);
-            FTPUploadFile("clinics.xml","", loginDocDoc, passwordDocDoc);
-            FTPUploadFile("slots.xml","", loginDocDoc, passwordDocDoc);
+            FTPUploadFile("doctors.xml","ftp.docdoc.ru", loginDocDoc, passwordDocDoc);
+            FTPUploadFile("clinics.xml","ftp.docdoc.ru", loginDocDoc, passwordDocDoc);
+            FTPUploadFile("slots.xml","ftp.docdoc.ru", loginDocDoc, passwordDocDoc);
 
 
         }
