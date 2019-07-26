@@ -72,8 +72,8 @@ namespace PersonalDuty
         }
         string OutString()
         {
-            string outputstr = string.Format("1000{0};{1};{2};{3};{4};{5};{6};{7};{8}"
-                               , ID
+            string outputstr = string.Format("{0};{1};{2};{3};{4};{5};{6};{7};{8}"
+                               , DCODE
                                , FULLNAME.Trim()
                                , FILIAL
                                , DEPNUM
@@ -88,8 +88,8 @@ namespace PersonalDuty
         }
         string OutString(Doctors doc)
         {
-            string outputstr = string.Format("1000{0};{1};{2};{3};{4};{5};{6};{7};{8}"
-                               , doc.ID
+            string outputstr = string.Format("{0};{1};{2};{3};{4};{5};{6};{7};{8}"
+                               , doc.DCODE
                                , doc.FULLNAME.Trim()
                                , doc.FILIAL
                                , doc.DEPNUM
@@ -172,7 +172,7 @@ namespace PersonalDuty
         }
         public string OutString(Doct_shedule ds)
         {
-            return ("1000" + ds.ID + ";" + ds.CHAIR + ";" + DATE.ToString("yyyy-MM-dd HH:mm:ss.fff") + ";" + ST_HOUR + ";" + ST_MIN + ";" + END_HOUR + ";" + END_MIN + ";" + INTERVAL + ";" + ds.FILID);
+            return ( ds.DCODE + ";" + ds.CHAIR + ";" + DATE.ToString("yyyy-MM-dd HH:mm:ss.fff") + ";" + ST_HOUR + ";" + ST_MIN + ";" + END_HOUR + ";" + END_MIN + ";" + INTERVAL + ";" + ds.FILID);
         }
 
 
@@ -180,7 +180,7 @@ namespace PersonalDuty
     public class Doct_shedule  // расписание докторов
     {
         public int ID;
-        string DCODE { get; set; }
+       public string DCODE { get; set; }
         public string CHAIR { get; set; }
 
         Collection<Date_shedule> DATElist { get; set; }
@@ -296,7 +296,7 @@ namespace PersonalDuty
                     {
                         if (shedule != null)
                         {
-                            string outputstr = "1000" + shedule.ID +
+                            string outputstr = shedule.DCODE +
                           ";" + shedule.DATE.ToString("yyyy-MM-dd HH:mm:ss.fff") +
                           ";" + shedule.ST_HOUR +
                           ";" + shedule.ST_MIN +
