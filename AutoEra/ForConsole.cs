@@ -68,8 +68,9 @@ namespace AutoEra
             sheduleCollect.InsertShedule(dutyDT, personalDTWithChek);
             DocDocSlots=new DocDoc.Slots();
             DocDocSlots.Slot=new List<DocDoc.Slot>(); 
-            foreach (Shedule sh in sheduleCollect.sheduleList)
+            foreach (DataRow sh in dutyDT.Rows)
                 {
+                if(bool.Parse(sh["BusyTime"].ToString())!=true)
                     DocDocSlots.Slot.Add(new DocDoc.Slot(sh));
                 }
 
@@ -108,16 +109,18 @@ namespace AutoEra
                             if (tmp.Rows.Count>0)
                         data[0] = tmp.Rows[0][0].ToString();
                         string s = DateTime.Parse(data["DATE"].ToString()).ToString("dd.MM.yyyy") + " " + data["st_time"].ToString();
-                        if (DateTime.Parse(s) <= DateTime.Now)
-                        {
-                            data[6] = true;
-                            continue;
-                        }
+                            if (DateTime.Parse(s) <= DateTime.Now)
+                            {
+                                data[6] = true;
+                                continue;
+                            }
+                          
                         int k;
-                        if (int.TryParse(data[5].ToString(), out k))
-                        {
-                            data[6] = true;
-                        }
+                            if (int.TryParse(data[5].ToString(), out k))
+                            {
+                                data[6] = true;
+                            }
+                            else data[6] = false;
                     }
                  //   CheckFakeTime();
                     flag = true;
