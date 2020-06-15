@@ -192,6 +192,9 @@ namespace AutoEra
             string loginDocDoc= Ftp.GetPrivateString("FTP", "logDoc");
             string passwordDocDoc= Ftp.GetPrivateString("FTP", "pasDoc");
 
+            string loginERA = Ftp.GetPrivateString("FTP", "logERA");
+            string passwordERA = Ftp.GetPrivateString("FTP", "pasERA");
+
             FTPUploadFile("infoclinic_doctors.csv", "prodoctorov.ru:2121",loginProdoctorov,passwordProdoctorov);
             FTPUploadFile("infoclinic_doctschedule.csv", "prodoctorov.ru:2121",loginProdoctorov,passwordProdoctorov);
             FTPUploadFile("infoclinic_schedule.csv", "prodoctorov.ru:2121",loginProdoctorov,passwordProdoctorov);
@@ -199,6 +202,10 @@ namespace AutoEra
             FTPUploadFile("clinics.xml","ftp.docdoc.ru", loginDocDoc, passwordDocDoc);
             FTPUploadFile("slots.xml","ftp.docdoc.ru", loginDocDoc, passwordDocDoc);
 
+
+            FTPUploadFile("doctors.xml", "82.202.193.218", loginERA, passwordERA);
+            FTPUploadFile("clinics.xml", "82.202.193.218", loginERA, passwordERA);
+            FTPUploadFile("slots.xml", "82.202.193.218", loginERA, passwordERA);
 
         }
         private void FTPUploadFile(string filename, string adress, string login, string pass)
